@@ -22,6 +22,8 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import CloseIcon from '@mui/icons-material/Close';
+import DownloadIcon from '@mui/icons-material/Download';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import PasswordField from '../common/components/PasswordField';
 import EditItemView from './components/EditItemView';
 import FieldTip from './components/FieldTip';
@@ -126,7 +128,44 @@ const Section = ({ icon, title, subtitle, columns = 2, children }) => (
   </Paper>
 );
 
-const PhotoSlot = ({ label, hint, tip, fileName, onChange }) => {
+const PhotoPreview = ({ src, alt }) => {
+  const [failed, setFailed] = useState(false);
+
+  if (failed) {
+    return (
+      <Typography variant="caption" color="text.secondary" sx={{ py: 2 }}>
+        Prévia indisponível
+      </Typography>
+    );
+  }
+
+  return (
+    <Box
+      component="a"
+      href={src}
+      target="_blank"
+      rel="noopener noreferrer"
+      sx={{ display: 'block', width: '100%', mt: 1 }}
+    >
+      <Box
+        component="img"
+        src={src}
+        alt={alt}
+        onError={() => setFailed(true)}
+        sx={{
+          display: 'block',
+          width: '100%',
+          height: 160,
+          objectFit: 'cover',
+          borderRadius: 1,
+          bgcolor: 'action.hover',
+        }}
+      />
+    </Box>
+  );
+};
+
+const PhotoSlot = ({ label, hint, tip, fileName, src, downloadName, onChange }) => {
   const inputRef = useRef(null);
 
   return (
@@ -164,24 +203,41 @@ const PhotoSlot = ({ label, hint, tip, fileName, onChange }) => {
         <Typography variant="caption" color="text.secondary">
           {hint}
         </Typography>
-        {fileName && (
-          <Chip
-            size="small"
-            label={fileName}
-            onDelete={() => onChange(null)}
-            deleteIcon={<CloseIcon />}
-            sx={{ maxWidth: '100%', mt: 0.5 }}
-          />
-        )}
-        <Button
-          size="small"
-          variant={fileName ? 'text' : 'outlined'}
-          startIcon={<FileUploadIcon />}
-          onClick={() => inputRef.current?.click()}
-          sx={{ mt: 'auto' }}
+        {fileName && <PhotoPreview key={src} src={src} alt={label} />}
+        <Stack
+          direction="row"
+          spacing={0.5}
+          justifyContent="center"
+          flexWrap="wrap"
+          sx={{ mt: 'auto', pt: 1 }}
         >
-          {fileName ? 'Trocar' : 'Enviar'}
-        </Button>
+          {fileName && (
+            <Button
+              size="small"
+              component="a"
+              href={src}
+              download={downloadName}
+              startIcon={<DownloadIcon />}
+            >
+              Baixar
+            </Button>
+          )}
+          <Button
+            size="small"
+            variant={fileName ? 'text' : 'outlined'}
+            startIcon={fileName ? <SwapHorizIcon /> : <FileUploadIcon />}
+            onClick={() => inputRef.current?.click()}
+          >
+            {fileName ? 'Trocar' : 'Enviar'}
+          </Button>
+          {fileName && (
+            <Tooltip title="Remover foto (salve para confirmar)">
+              <IconButton size="small" onClick={() => onChange(null)}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Stack>
       </Box>
     </FieldTip>
   );
@@ -201,6 +257,7 @@ const DevicePage = () => {
 
   const [item, setItem] = useState(uniqueId ? { uniqueId } : null);
   const [showQr, setShowQr] = useState(false);
+  const [imageVersions, setImageVersions] = useState({});
 
   const handleFileInput = useCatch(async (slot, attribute, newFile) => {
     if (newFile && item?.id) {
@@ -209,6 +266,7 @@ const DevicePage = () => {
         body: newFile,
       });
       setItem({ ...item, attributes: { ...item.attributes, [attribute]: await response.text() } });
+      setImageVersions((versions) => ({ ...versions, [slot]: Date.now() }));
     } else if (!newFile) {
       // eslint-disable-next-line no-unused-vars
       const { [attribute]: removed, ...remainingAttributes } = item.attributes || {};
@@ -471,16 +529,25 @@ const DevicePage = () => {
             columns={3}
           >
             {item.id ? (
-              deviceImageSlots.map(({ slot, attribute, label, hint, tip }) => (
-                <PhotoSlot
-                  key={slot}
-                  label={label}
-                  hint={hint}
-                  tip={tip}
-                  fileName={item.attributes?.[attribute]}
-                  onChange={(file) => handleFileInput(slot, attribute, file)}
-                />
-              ))
+              deviceImageSlots.map(({ slot, attribute, label, hint, tip }) => {
+                const fileName = item.attributes?.[attribute];
+                const version = imageVersions[slot];
+                return (
+                  <PhotoSlot
+                    key={slot}
+                    label={label}
+                    hint={hint}
+                    tip={tip}
+                    fileName={fileName}
+                    src={
+                      fileName &&
+                      `/api/media/${item.uniqueId}/${fileName}${version ? `?v=${version}` : ''}`
+                    }
+                    downloadName={fileName && `${item.uniqueId}_${fileName}`}
+                    onChange={(file) => handleFileInput(slot, attribute, file)}
+                  />
+                );
+              })
             ) : (
               <Typography variant="body2" color="text.secondary" sx={fullRow}>
                 Salve o dispositivo para poder enviar as fotos.
