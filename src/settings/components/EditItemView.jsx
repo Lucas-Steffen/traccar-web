@@ -25,6 +25,7 @@ const EditItemView = ({
   onItemSaved,
   menu,
   breadcrumbs,
+  maxWidth = 'xs',
 }) => {
   const navigate = useNavigate();
   const { classes } = useSettingsStyles();
@@ -66,7 +67,7 @@ const EditItemView = ({
 
   return (
     <PageLayout menu={menu} breadcrumbs={breadcrumbs}>
-      <Container maxWidth="xs" className={classes.container}>
+      <Container maxWidth={maxWidth} className={classes.container}>
         {item ? (
           children
         ) : (
