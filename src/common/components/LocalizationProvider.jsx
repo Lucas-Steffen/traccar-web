@@ -183,7 +183,7 @@ const ResolvedLocalizationProvider = ({ language, setLocalLanguage, children }) 
 
   const value = useMemo(
     () => ({
-      languages: { ...languages, [language]: { ...languages[language], data } },
+      languages: { ...languages, [language]: { ...languages[language], data: { ...en, ...data } } },
       language,
       setLocalLanguage,
       direction,

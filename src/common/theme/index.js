@@ -9,7 +9,14 @@ export default (server, darkMode, direction) =>
     () =>
       createTheme({
         typography: {
-          fontFamily: 'Roboto,Segoe UI,Helvetica Neue,Arial,sans-serif',
+          fontFamily: '"Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+          button: {
+            textTransform: 'none',
+            fontWeight: 700,
+          },
+        },
+        shape: {
+          borderRadius: 6,
         },
         palette: palette(server, darkMode),
         direction,

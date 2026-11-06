@@ -14,6 +14,7 @@ import HelpIcon from '@mui/icons-material/Help';
 import PaymentIcon from '@mui/icons-material/Payment';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import CalculateIcon from '@mui/icons-material/Calculate';
+import BusinessIcon from '@mui/icons-material/Business';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useTranslation } from '../../common/components/LocalizationProvider';
@@ -142,6 +143,14 @@ const SettingsMenu = () => {
                 link="/settings/server"
                 icon={<SettingsIcon />}
                 selected={location.pathname === '/settings/server'}
+              />
+            )}
+            {admin && (
+              <MenuItem
+                title={t('settingsTenants')}
+                link="/settings/tenants"
+                icon={<BusinessIcon />}
+                selected={location.pathname.startsWith('/settings/tenant')}
               />
             )}
             <MenuItem

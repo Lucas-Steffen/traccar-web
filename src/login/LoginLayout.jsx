@@ -12,7 +12,9 @@ const useStyles = makeStyles()((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    background: theme.palette.primary.main,
+    position: 'relative',
+    overflow: 'hidden',
+    background: '#272727',
     paddingBottom: theme.spacing(5),
     width: theme.dimensions.sidebarWidth,
     [theme.breakpoints.down('lg')]: {
@@ -21,6 +23,17 @@ const useStyles = makeStyles()((theme) => ({
     [theme.breakpoints.down('sm')]: {
       width: '0px',
     },
+  },
+  wordmark: {
+    position: 'absolute',
+    left: '8%',
+    bottom: '4%',
+    fontSize: '3.2vw',
+    fontWeight: 700,
+    whiteSpace: 'nowrap',
+    userSelect: 'none',
+    pointerEvents: 'none',
+    color: 'rgba(255, 255, 255, 0.04)',
   },
   paper: {
     display: 'flex',
@@ -48,7 +61,10 @@ const LoginLayout = ({ children }) => {
     <main className={classes.root}>
       <div className={classes.sidebar}>
         {!useMediaQuery(theme.breakpoints.down('lg')) && (
-          <LogoImage color={theme.palette.secondary.contrastText} />
+          <>
+            <span className={classes.wordmark}>LOCALIZE-C</span>
+            <LogoImage color="#b6ff22" />
+          </>
         )}
       </div>
       <Paper className={classes.paper}>

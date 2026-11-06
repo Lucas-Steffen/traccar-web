@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { ThemeProvider, useMediaQuery } from '@mui/material';
+import { ThemeProvider } from '@mui/material';
 import { CacheProvider } from '@emotion/react';
 import createCache from '@emotion/cache';
 import { prefixer } from 'stylis';
@@ -23,8 +23,8 @@ const AppThemeProvider = ({ children }) => {
   const { direction } = useLocalization();
 
   const serverDarkMode = server?.attributes?.darkMode;
-  const preferDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const darkMode = serverDarkMode !== undefined ? serverDarkMode : preferDarkMode;
+  // Padrão Mobilize-C: tema escuro por padrão; o servidor pode forçar claro com darkMode=false.
+  const darkMode = serverDarkMode !== undefined ? serverDarkMode : true;
 
   const themeInstance = theme(server, darkMode, direction);
 

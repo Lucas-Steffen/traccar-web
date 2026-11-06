@@ -396,6 +396,26 @@ export default (t) =>
         type: 'number',
         dataType: 'speed',
       },
+      accAlarm: {
+        name: t('positionAccAlarm'),
+        type: 'number',
+      },
+      networkIndicator: {
+        name: t('positionNetworkIndicator'),
+        type: 'number',
+      },
+      country: {
+        name: t('positionCountry'),
+        type: 'number',
+      },
+      satellitesBeidou: {
+        name: t('positionSatellitesBeidou'),
+        type: 'number',
+      },
+      satellitesGlonass: {
+        name: t('positionSatellitesGlonass'),
+        type: 'number',
+      },
     }),
     [t],
   );

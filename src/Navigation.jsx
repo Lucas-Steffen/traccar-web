@@ -37,6 +37,8 @@ const ComputedAttributesPage = lazy(() => import('./settings/ComputedAttributesP
 const ComputedAttributePage = lazy(() => import('./settings/ComputedAttributePage'));
 const MaintenancesPage = lazy(() => import('./settings/MaintenancesPage'));
 const MaintenancePage = lazy(() => import('./settings/MaintenancePage'));
+const TenantsPage = lazy(() => import('./settings/TenantsPage'));
+const TenantPage = lazy(() => import('./settings/TenantPage'));
 const CommandsPage = lazy(() => import('./settings/CommandsPage'));
 const CommandPage = lazy(() => import('./settings/CommandPage'));
 const StatisticsPage = lazy(() => import('./reports/StatisticsPage'));
@@ -144,6 +146,9 @@ const Navigation = () => {
             <Route path="calendars" element={<CalendarsPage />} />
             <Route path="calendar/:id" element={<CalendarPage />} />
             <Route path="calendar" element={<CalendarPage />} />
+            <Route path="tenants" element={<TenantsPage />} />
+            <Route path="tenant/:id" element={<TenantPage />} />
+            <Route path="tenant" element={<TenantPage />} />
             <Route path="commands" element={<CommandsPage />} />
             <Route path="command/:id" element={<CommandPage />} />
             <Route path="command" element={<CommandPage />} />

@@ -5,12 +5,8 @@ html, body {
 body {
   margin: 0;
   padding: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background: black;
-  }
+  background: #151619;
+  font-family: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
 .root {

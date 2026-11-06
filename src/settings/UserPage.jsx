@@ -381,6 +381,14 @@ const UserPage = () => {
                 label={t('userUserLimit')}
                 disabled={!admin}
               />
+              {admin && (
+                <SelectField
+                  value={item.tenantId || null}
+                  onChange={(e) => setItem({ ...item, tenantId: Number(e.target.value) || 0 })}
+                  endpoint="/api/tenants"
+                  label={t('sharedTenant')}
+                />
+              )}
               <Button variant="outlined" color="primary" onClick={() => setRevokeDialogOpen(true)}>
                 {t('userRevokeToken')}
               </Button>

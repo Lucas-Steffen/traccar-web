@@ -15,9 +15,10 @@ const LinkField = ({
   keyBase,
   keyLink,
   titleGetter = defaultTitleGetter,
+  eager = false,
 }) => {
   const t = useTranslation();
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(eager);
   const [items, setItems] = useState();
   const [linked, setLinked] = useState();
   const [updated, setUpdated] = useState(false);

@@ -1,0 +1,69 @@
+server {
+    listen 80;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    client_max_body_size 20m;
+
+    # Resolve o upstream a cada request (o nginx sobe mesmo com o server fora do ar).
+    # NGINX_LOCAL_RESOLVERS vem do /etc/resolv.conf do container: 127.0.0.11 em
+    # redes do Docker/EasyPanel, ou o DNS do host na rede bridge padrão.
+    resolver ${NGINX_LOCAL_RESOLVERS} valid=10s ipv6=off;
+    set $traccar_api ${TRACCAR_API_URL};
+
+    # Host do upstream (e não o do navegador): funciona tanto com o hostname
+    # interno do EasyPanel quanto com um domínio público atrás do Traefik.
+
+    location /api/socket {
+        proxy_pass $traccar_api;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $proxy_host;
+        proxy_ssl_server_name on;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 1h;
+        proxy_send_timeout 1h;
+    }
+
+    location /api {
+        proxy_pass $traccar_api;
+        proxy_http_version 1.1;
+        proxy_set_header Host $proxy_host;
+        proxy_ssl_server_name on;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 5m;
+    }
+
+    # Service worker e index sem cache, para o front novo chegar logo após o deploy
+    location = /sw.js {
+        add_header Cache-Control "no-cache";
+    }
+
+    location = /index.html {
+        add_header Cache-Control "no-cache";
+    }
+
+    location = /manifest.webmanifest {
+        add_header Cache-Control "no-cache";
+    }
+
+    # Assets com hash no nome podem ter cache longo
+    location /assets/ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        try_files $uri =404;
+    }
+
+    location ~ \.tpl$ {
+        return 404;
+    }
+
+    # SPA: qualquer rota do React cai no index.html
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
