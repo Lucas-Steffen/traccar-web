@@ -96,6 +96,9 @@ const DeviceRow = ({ devices, index, style }) => {
     if (field === 'tenantId') {
       return item.tenantId ? <TenantValue tenantId={item.tenantId} /> : null;
     }
+    if (field === 'available') {
+      return t(item.available === false ? 'deviceUnavailable' : 'deviceAvailable');
+    }
     if (field === 'motion') {
       return <MotionBar deviceId={item.id} />;
     }

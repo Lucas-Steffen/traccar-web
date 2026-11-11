@@ -11,6 +11,8 @@ import {
   TableFooter,
   FormControlLabel,
   Switch,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@mui/material';
 import LinkIcon from '@mui/icons-material/Link';
 import { useTheme } from '@mui/material/styles';
@@ -50,6 +52,7 @@ const DevicesPage = () => {
   const [items, setItems] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [showAll, setShowAll] = usePersistedState('showAllDevices', false);
+  const [availableFilter, setAvailableFilter] = useState('');
   const [hasMore, setHasMore] = useState(true);
 
   const loadItems = useCallback(
@@ -58,12 +61,15 @@ const DevicesPage = () => {
       if (searchKeyword) {
         query.append('keyword', searchKeyword);
       }
+      if (availableFilter) {
+        query.append('available', availableFilter);
+      }
       const response = await fetchOrThrow(`/api/devices?${query.toString()}`, { signal });
       const data = await response.json();
       setItems((previous) => (offset ? [...previous, ...data] : data));
       setHasMore(data.length >= pageSize);
     },
-    [searchKeyword, showAll],
+    [searchKeyword, showAll, availableFilter],
   );
 
   const sentinelRef = useScrollToLoad(() => loadItems(items.length));
@@ -107,6 +113,17 @@ const DevicesPage = () => {
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'deviceTitle']}>
       <SearchHeader keyword={searchKeyword} setKeyword={setSearchKeyword} />
+      <ToggleButtonGroup
+        exclusive
+        size="small"
+        value={availableFilter}
+        onChange={(_, value) => setAvailableFilter(value ?? '')}
+        sx={{ mx: 2, mb: 2 }}
+      >
+        <ToggleButton value="">{t('deviceAvailabilityAll')}</ToggleButton>
+        <ToggleButton value="true">{t('deviceAvailable')}</ToggleButton>
+        <ToggleButton value="false">{t('deviceUnavailable')}</ToggleButton>
+      </ToggleButtonGroup>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
@@ -117,6 +134,7 @@ const DevicesPage = () => {
             <TableCell>{t('deviceModel')}</TableCell>
             <TableCell>{t('deviceContact')}</TableCell>
             <TableCell>{t('userExpirationTime')}</TableCell>
+            <TableCell>{t('deviceAvailable')}</TableCell>
             <TableCell>{t('positionAddress')}</TableCell>
             {manager && <TableCell>{t('settingsUsers')}</TableCell>}
             <TableCell className={classes.columnAction} />
@@ -132,6 +150,9 @@ const DevicesPage = () => {
               <TableCell>{item.model}</TableCell>
               <TableCell>{item.contact}</TableCell>
               <TableCell>{formatTime(item.expirationTime, 'date')}</TableCell>
+              <TableCell>
+                {t(item.available === false ? 'deviceUnavailable' : 'deviceAvailable')}
+              </TableCell>
               <TableCell>
                 {positions[item.id] && (
                   <AddressValue
@@ -161,7 +182,7 @@ const DevicesPage = () => {
           {hasMore && (
             <TableShimmer
               ref={items.length > 0 ? sentinelRef : null}
-              columns={manager ? 9 : 8}
+              columns={manager ? 10 : 9}
               endAction
             />
           )}
@@ -173,7 +194,7 @@ const DevicesPage = () => {
                 {t('reportExport')}
               </Button>
             </TableCell>
-            <TableCell colSpan={manager ? 9 : 8} align="right">
+            <TableCell colSpan={manager ? 10 : 9} align="right">
               <FormControlLabel
                 control={
                   <Switch

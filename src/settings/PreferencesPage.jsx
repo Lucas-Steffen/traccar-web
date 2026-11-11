@@ -54,6 +54,7 @@ const deviceFields = [
   { id: 'modelYear', name: 'deviceModelYear' },
   { id: 'groupId', name: 'groupDialog' },
   { id: 'tenantId', name: 'sharedTenant' },
+  { id: 'available', name: 'deviceAvailable' },
   { id: 'contact', name: 'deviceContact' },
   { id: 'geofenceIds', name: 'sharedGeofence' },
   { id: 'driverUniqueId', name: 'sharedDriver' },

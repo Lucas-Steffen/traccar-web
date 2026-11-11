@@ -338,6 +338,21 @@ const DevicePage = () => {
                     disabled={!manager}
                   />
                 </FieldTip>
+                {item.available === false && (
+                  <Chip size="small" color="warning" label={t('deviceUnavailable')} />
+                )}
+                <FieldTip title="Indica se o device está disponível para uso. Campo available.">
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={item.available !== false}
+                        onChange={(event) => setItem({ ...item, available: event.target.checked })}
+                      />
+                    }
+                    label={t('deviceAvailable')}
+                    disabled={!manager}
+                  />
+                </FieldTip>
                 <Button
                   variant="outlined"
                   startIcon={<QrCodeIcon />}
