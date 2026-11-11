@@ -33,6 +33,8 @@ import EngineIcon from '../resources/images/data/engine.svg?react';
 import { useAttributePreference } from '../common/util/preferences';
 import GeofencesValue from '../common/components/GeofencesValue';
 import DriverValue from '../common/components/DriverValue';
+import GroupValue from '../common/components/GroupValue';
+import TenantValue from '../common/components/TenantValue';
 import MotionBar from './components/MotionBar';
 
 dayjs.extend(relativeTime);
@@ -87,6 +89,12 @@ const DeviceRow = ({ devices, index, style }) => {
     if (field === 'driverUniqueId') {
       const driverUniqueId = position?.attributes?.driverUniqueId;
       return driverUniqueId ? <DriverValue driverUniqueId={driverUniqueId} /> : null;
+    }
+    if (field === 'groupId') {
+      return item.groupId ? <GroupValue groupId={item.groupId} /> : null;
+    }
+    if (field === 'tenantId') {
+      return item.tenantId ? <TenantValue tenantId={item.tenantId} /> : null;
     }
     if (field === 'motion') {
       return <MotionBar deviceId={item.id} />;
