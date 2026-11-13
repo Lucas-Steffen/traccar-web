@@ -6,6 +6,7 @@ import {
   AccordionDetails,
   Typography,
   TextField,
+  MenuItem,
   FormControlLabel,
   Checkbox,
 } from '@mui/material';
@@ -18,6 +19,12 @@ import SettingsMenu from './components/SettingsMenu';
 import SelectField from '../common/components/SelectField';
 import { geofencesActions } from '../store';
 import useSettingsStyles from './common/useSettingsStyles';
+
+const geofenceTypes = [
+  { id: 'MAINTENANCE', label: 'geofenceTypeMaintenance' },
+  { id: 'HOME', label: 'geofenceTypeHome' },
+  { id: 'CHARGING_STATION', label: 'geofenceTypeChargingStation' },
+];
 
 const GeofencePage = () => {
   const { classes } = useSettingsStyles();
@@ -67,6 +74,28 @@ const GeofencePage = () => {
                 value={item.description || ''}
                 onChange={(event) => setItem({ ...item, description: event.target.value })}
                 label={t('sharedDescription')}
+              />
+              <TextField
+                select
+                value={item.type || ''}
+                onChange={(event) => setItem({ ...item, type: event.target.value || null })}
+                label={t('sharedType')}
+              >
+                <MenuItem value="">&nbsp;</MenuItem>
+                {geofenceTypes.map((type) => (
+                  <MenuItem key={type.id} value={type.id}>
+                    {t(type.label)}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={!!item.blocks}
+                    onChange={(event) => setItem({ ...item, blocks: event.target.checked })}
+                  />
+                }
+                label={t('geofenceBlocks')}
               />
               <SelectField
                 value={item.calendarId}
